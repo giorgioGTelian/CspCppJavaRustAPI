@@ -1,0 +1,57 @@
+
+version: '3.3'
+services:
+
+ 
+
+   appdb:
+      build: 
+        context : .
+        dockerfile: ./appdb/Dockerfile
+
+      restart: always
+      networks:
+        vpcbr:
+           ipv4_address: 10.5.0.27
+      volumes:
+             - ./appdb/app:/app/
+   
+
+
+   appserver:
+      build: 
+        context : ..
+        dockerfile: docker/appserver/Dockerfile
+        args:
+                - ssh_prv_key 
+                - ssh_pub_key 
+      restart: always
+      image: dataserver:ver1
+      depends_on:
+          - appdb
+
+      networks:
+        vpcbr:
+           ipv4_address: 10.5.0.23
+      ports:
+        - "51984:1984"
+      volumes:
+             - ../project:/project
+   
+
+          
+               
+      
+   
+
+
+networks:
+    vpcbr:
+        # use the bridge driver, but enable IPv6
+        driver: bridge
+        driver_opts:
+            com.docker.network.enable_ipv6: "true"
+        ipam:
+            driver: default
+            config:
+                    - subnet: 10.5.0.0/24
