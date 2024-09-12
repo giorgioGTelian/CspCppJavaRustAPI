@@ -28,3 +28,5 @@ anyhow = "1.0"
 thiserror = "1.0"
 log = "0.4"
 env_logger = "0.9"
+
+<--! https://dev.to/dexwritescode/create-a-rest-api-in-rust-that-you-wouldnt-be-too-ashamed-of-deploying-to-production-3ie0 -->

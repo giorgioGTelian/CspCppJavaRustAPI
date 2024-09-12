@@ -48,7 +48,7 @@ async fn main() -> std::io::Result<()> {
     .run()
     .await
 }
-
+// setting up some more server configurations
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -62,3 +62,48 @@ mod tests {
         assert!(resp.status().is_success());
     }
 }
+
+let app_state = database::get_connection_pool(&config);
+    let app = app::create_app(app_state);
+
+    let address: SocketAddr = format!("{}:{}", config.server.host, config.server.port) {
+        .parse()
+        .expect("Unable to parse socket address");
+
+    axum::Server::bind(&address)
+        .serve(app.into_make_service())
+        .with_graceful_shutdown(...)
+        .await
+        .expect("Failed to start server");
+    }
+
+    fn init_tracer(config: &Configurations) -> Result<opentelemetry_sdk::trace::Tracer, TraceError> {
+        opentelemetry_otlp::new_pipeline()
+            .tracing()
+            .with_exporter(
+                opentelemetry_otlp::new_exporter()
+                    .tonic()
+                    .with_endpoint(config.tracing.host.clone()),
+            )
+            .with_trace_config(
+                sdktrace::config().with_resource(Resource::new(vec![KeyValue::new(
+                    "service.name",
+                    config.service.name.clone(),
+                )])),
+            )
+            .install_batch(runtime::Tokio)
+    }
+    
+    #[tokio::main]
+    async fn main() {
+    ...
+    // initialize tracing
+        let tracer = init_tracer(&config).expect("Failed to initialize tracer.");
+        let fmt_layer = tracing_subscriber::fmt::layer();
+        tracing_subscriber::registry()
+            .with(tracing_subscriber::EnvFilter::from(&config.logger.level))
+            .with(fmt_layer)
+            .with(tracing_opentelemetry::layer().with_tracer(tracer))
+            .init();
+    ...
+    }
