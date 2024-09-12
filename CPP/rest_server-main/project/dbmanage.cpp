@@ -10,8 +10,6 @@
  *       Revision:  none
  *       Compiler:  gcc
  *
- *         Author:  Yair Gadelov (yg), yair.gadelov@gmail.com
- *        Company:  Israel
  *
  * =====================================================================================
  */
